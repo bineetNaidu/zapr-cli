@@ -1,5 +1,6 @@
 import { defineCommand } from 'citty';
 import { ZaprApp } from '../../index.js';
+import pkg from '../../../package.json' with { type: 'json' };
 
 /**
  * Root/default command handler for `zapr`.
@@ -10,7 +11,7 @@ import { ZaprApp } from '../../index.js';
 export const rootCommand = defineCommand({
   meta: {
     name: 'zapr',
-    version: '1.0.0',
+    version: pkg.version,
     description: 'Blazing fast, class-based node_modules and build output cleaner CLI tool',
   },
   args: {

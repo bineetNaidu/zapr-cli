@@ -1,6 +1,7 @@
 import { createConsola } from 'consola';
 import pc from 'picocolors';
 import type { DiscoveredTarget, ScanResult } from '../types/index.js';
+import pkg from '../../package.json' with { type: 'json' };
 
 export class TerminalLogger {
   private targetRoot = '';
@@ -13,7 +14,7 @@ export class TerminalLogger {
   showBanner(): void {
     this.logger.log('');
     this.logger.log(
-      `  ${pc.bold(pc.bgCyan(pc.black(' ZAPR ')))} ${pc.bold(pc.cyan('⚡ Workspace Cleaner'))} ${pc.dim('v1.0.0')}`,
+      `  ${pc.bold(pc.bgCyan(pc.black(' ZAPR ')))} ${pc.bold(pc.cyan('⚡ Workspace Cleaner'))} ${pc.dim(`v${pkg.version}`)}`,
     );
     this.logger.log(`  ${pc.dim('───────────────────────────────────────────────────────')}`);
   }
