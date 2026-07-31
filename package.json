@@ -1,17 +1,25 @@
 {
   "name": "cleanr",
   "version": "1.0.0",
-  "description": "Blazing fast node_modules scanner & cleaner CLI tool",
+  "description": "Blazing fast node_modules and build output cleaner CLI tool",
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "bin": {
     "cleanr": "./bin/cleanr.mjs"
   },
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "unbuild",
@@ -20,7 +28,8 @@
     "format": "prettier --write src/ tests/",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "keywords": [
     "cli",
@@ -28,9 +37,10 @@
     "node_modules",
     "cleaner",
     "purge",
-    "disk-space"
+    "disk-space",
+    "build-cleaner"
   ],
-  "author": "",
+  "author": "Bineet Naidu",
   "license": "Blue-Oak-1.0.0",
   "dependencies": {
     "citty": "^0.2.2",
