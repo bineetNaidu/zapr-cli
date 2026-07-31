@@ -44,6 +44,14 @@
   ],
   "author": "Bineet Naidu",
   "license": "Blue-Oak-1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bineetNaidu/zapr-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bineetNaidu/zapr-cli/issues"
+  },
+  "homepage": "https://github.com/bineetNaidu/zapr-cli#readme",
   "dependencies": {
     "citty": "^0.2.2",
     "consola": "^3.4.2",
