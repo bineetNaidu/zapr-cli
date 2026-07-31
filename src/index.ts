@@ -49,6 +49,8 @@ export class CleanrApp {
       targetPath: resolvedPath,
       dryRun: Boolean(options.dryRun),
       excludedFolders: [...DEFAULT_EXCLUDED_FOLDERS, ...(options.exclude ?? [])],
+      onScanningFolder: (folderName) => this.logger.showScanningFolder(folderName),
+      onSkippedFolder: (folderName) => this.logger.showSkippedFolder(folderName),
     };
 
     if (scanOptions.dryRun) {
@@ -87,6 +89,10 @@ export class CleanrApp {
     const cleanResult = await this.cleaner.clean(scanResult.targets, {
       dryRun: scanOptions.dryRun,
       confirm: true,
+      onItemPurged: (current, total, targetPath) =>
+        this.logger.showPurgedItem(current, total, targetPath),
+      onItemFailed: (targetPath, errorMsg) =>
+        this.logger.showPurgeError(targetPath, errorMsg),
     });
 
     this.logger.showDeletionSuccess(cleanResult.successCount, scanResult.formattedSize);
