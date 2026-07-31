@@ -17,9 +17,31 @@ export class TerminalLogger {
     this.logger.info(`${pc.bold('Scanning directory:')} ${pc.magenta(path)}`);
   }
 
+  showScanningFolder(folderName: string): void {
+    this.logger.log(`  ${pc.bold(pc.cyan('>>>'))} Scanning folder ${pc.magenta(`'${folderName}'`)}...`);
+  }
+
+  showSkippedFolder(folderName: string): void {
+    this.logger.log(
+      `  ${pc.yellow('⏭ Skipping excluded folder:')} ${pc.dim(folderName)}`,
+    );
+  }
+
   showDiscoveredTarget(target: DiscoveredTarget): void {
     this.logger.log(
-      `  ${pc.green('✔ Detected')} in ${pc.bold(target.folderName)}: ${pc.dim(target.nodeModulesPaths.join(', '))}`,
+      `  ${pc.green('✔ Detected:')} ${pc.dim(target.nodeModulesPaths.join(', '))}`,
+    );
+  }
+
+  showPurgedItem(current: number, total: number, targetPath: string): void {
+    this.logger.log(
+      `  ${pc.dim(`[${current}/${total}]`)} ${pc.green('✔ Purged:')} ${targetPath}`,
+    );
+  }
+
+  showPurgeError(targetPath: string, errorMsg: string): void {
+    this.logger.log(
+      `  ${pc.red(`✖ Failed to purge '${targetPath}': ${errorMsg}`)}`,
     );
   }
 
