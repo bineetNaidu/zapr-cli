@@ -3,11 +3,11 @@ import path from 'node:path';
 import type { DiscoveredTarget, ScanOptions, ScanResult } from '../../types/index.js';
 import { DiskCalculator } from '../stats/DiskCalculator.js';
 import { formatBytes, formatDuration, resolveAbsolutePath } from '../../utils/formatters.js';
-import { TARGET_FOLDER_NAME } from '../../config/defaults.js';
+import { TARGET_FOLDER_NAMES } from '../../config/defaults.js';
 import { PathNotFoundError, PermissionError } from '../../errors/CliError.js';
 
 /**
- * Core engine responsible for scanning workspace trees to locate node_modules directories.
+ * Core engine responsible for scanning workspace trees to locate target cleanup directories (node_modules + build outputs).
  *
  * Traverses file systems efficiently while respecting exclusion rules and emitting progress hooks.
  */
@@ -28,6 +28,7 @@ export class DirectoryScanner {
     const startTime = Date.now();
     const rootPath = resolveAbsolutePath(options.targetPath);
     const excluded = new Set(options.excludedFolders);
+    const targetSet = new Set(TARGET_FOLDER_NAMES);
 
     const targets: DiscoveredTarget[] = [];
     let totalSizeBytes = 0;
@@ -47,19 +48,20 @@ export class DirectoryScanner {
       throw err;
     }
 
-    // Scenario 1: Check if the specified root directory itself is a direct node_modules container
-    const rootNodeModules = topLevelEntries.find(
-      (entry) => entry.isDirectory() && entry.name === TARGET_FOLDER_NAME,
+    // Scenario 1: Check if the specified root directory itself is a direct target container
+    const rootDirectTargets = topLevelEntries.filter(
+      (entry) => entry.isDirectory() && targetSet.has(entry.name),
     );
 
-    if (rootNodeModules) {
-      const nmPath = path.join(rootPath, TARGET_FOLDER_NAME);
-      const size = await this.diskCalculator.calculateDirectorySize(nmPath);
-      totalSizeBytes += size;
+    if (rootDirectTargets.length > 0) {
+      const paths = rootDirectTargets.map((e) => path.join(rootPath, e.name));
+      for (const p of paths) {
+        totalSizeBytes += await this.diskCalculator.calculateDirectorySize(p);
+      }
       const target: DiscoveredTarget = {
         folderName: path.basename(rootPath),
         projectFolderPath: rootPath,
-        nodeModulesPaths: [nmPath],
+        nodeModulesPaths: paths,
       };
       targets.push(target);
       options.onTargetDiscovered(target);
@@ -67,7 +69,7 @@ export class DirectoryScanner {
 
     // Scenario 2: Iterate through child directories to locate nested projects
     for (const entry of topLevelEntries) {
-      if (entry.isSymbolicLink()) continue; // ⏭️ SKIP THIS SYMLINK! Move immediately to the next entry in the folder.
+      if (entry.isSymbolicLink()) continue;
 
       if (!entry.isDirectory() || excluded.has(entry.name)) {
         if (entry.isDirectory() && excluded.has(entry.name)) {
@@ -76,11 +78,11 @@ export class DirectoryScanner {
         continue;
       }
 
-      if (entry.name === TARGET_FOLDER_NAME) continue;
+      if (targetSet.has(entry.name)) continue;
 
       options.onScanningFolder(entry.name);
       const projectFolderPath = path.join(rootPath, entry.name);
-      const discoveredPaths = await this.findNodeModules(projectFolderPath, excluded, options);
+      const discoveredPaths = await this.findTargetDirectories(projectFolderPath, excluded, targetSet, options);
 
       if (discoveredPaths.length > 0) {
         const target: DiscoveredTarget = {
@@ -111,11 +113,12 @@ export class DirectoryScanner {
   }
 
   /**
-   * Helper function to recursively crawl nested folders looking for node_modules directory matches.
+   * Helper function to recursively crawl nested folders looking for target directory matches.
    */
-  private async findNodeModules(
+  private async findTargetDirectories(
     dirPath: string,
     excluded: Set<string>,
+    targetSet: Set<string>,
     options: ScanOptions,
   ): Promise<string[]> {
     let foundPaths: string[] = [];
@@ -132,10 +135,10 @@ export class DirectoryScanner {
 
         const fullPath = path.join(dirPath, entry.name);
 
-        if (entry.name === TARGET_FOLDER_NAME) {
+        if (targetSet.has(entry.name)) {
           foundPaths.push(fullPath);
         } else {
-          const subPaths = await this.findNodeModules(fullPath, excluded, options);
+          const subPaths = await this.findTargetDirectories(fullPath, excluded, targetSet, options);
           foundPaths = foundPaths.concat(subPaths);
         }
       }

@@ -9,21 +9,27 @@
  * Common system and dependency management directories that should be skipped by default
  * during recursive directory scanning.
  */
+/**
+ * Common system and IDE metadata directories that should be skipped by default
+ * during recursive directory scanning.
+ */
 export const DEFAULT_EXCLUDED_FOLDERS: readonly string[] = [
   '.git',
   '.hg',
   '.svn',
   '.vscode',
   '.idea',
-  'dist',
-  'build',
-  'coverage',
-  '.next',
-  '.nuxt',
   'vendor',
 ];
 
 /**
- * Standard folder name targeted for disk cleanup operations.
+ * Default directory names targeted for cleanup operations (node_modules + build outputs).
  */
-export const TARGET_FOLDER_NAME = 'node_modules';
+export const TARGET_FOLDER_NAMES: readonly string[] = [
+  'node_modules',
+  'dist',
+  'build',
+  '.next',
+  '.nuxt',
+  'coverage',
+];

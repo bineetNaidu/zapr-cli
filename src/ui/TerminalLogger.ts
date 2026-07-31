@@ -58,7 +58,7 @@ export class TerminalLogger {
     this.logger.log('');
     this.logger.success(pc.bold(`Scan complete in ${pc.cyan(result.durationSeconds + 's')}`));
     this.logger.log(
-      `  ${pc.dim('•')} Target Folders : ${pc.yellow(result.totalNodeModulesCount.toString())} 'node_modules' directories`,
+      `  ${pc.dim('•')} Target Folders : ${pc.yellow(result.totalNodeModulesCount.toString())} target directories`,
     );
     this.logger.log(
       `  ${pc.dim('•')} Project Groups : ${pc.yellow(result.targets.length.toString())} projects`,
