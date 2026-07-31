@@ -11,12 +11,12 @@ import { SignalHandler } from './utils/SignalHandler.js';
 import { InvalidPathError, PathNotFoundError } from './errors/CliError.js';
 
 /**
- * Main application orchestrator for Cleanr.
+ * Main application orchestrator for Zapr.
  *
  * Coordinates interaction between scanner engine, cleaning engine, logger, and user UI.
  * Can be instantiated directly by Node apps or invoked via CLI runner.
  */
-export class CleanrApp {
+export class ZaprApp {
   private readonly scanner: DirectoryScanner;
   private readonly cleaner: FolderCleaner;
   private readonly logger: TerminalLogger;
@@ -59,7 +59,7 @@ export class CleanrApp {
 
     if (!options.path) {
       throw new InvalidPathError(
-        'Please explicitly specify a path using --path or -p (e.g. cleanr -p ./projects)',
+        'Please explicitly specify a path using --path or -p (e.g. zapr -p ./projects)',
       );
     }
 

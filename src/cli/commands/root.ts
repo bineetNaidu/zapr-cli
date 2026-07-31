@@ -1,17 +1,17 @@
 import { defineCommand } from 'citty';
-import { CleanrApp } from '../../index.js';
+import { ZaprApp } from '../../index.js';
 
 /**
- * Root/default command handler for `cleanr`.
+ * Root/default command handler for `zapr`.
  *
  * Handles argument parsing, option resolution, and delegates execution
- * to the core `CleanrApp` orchestrator.
+ * to the core `ZaprApp` orchestrator.
  */
 export const rootCommand = defineCommand({
   meta: {
-    name: 'cleanr',
+    name: 'zapr',
     version: '1.0.0',
-    description: 'Blazing fast, class-based node_modules cleaner CLI tool',
+    description: 'Blazing fast, class-based node_modules and build output cleaner CLI tool',
   },
   args: {
     path: {
@@ -52,7 +52,7 @@ export const rootCommand = defineCommand({
   async run({ args }) {
     const excludeList = args.exclude ? args.exclude.split(',').map((s) => s.trim()) : [];
     const concurrencyNum = parseInt(args.concurrency, 10) || 5;
-    const app = new CleanrApp();
+    const app = new ZaprApp();
 
     try {
       await app.run({

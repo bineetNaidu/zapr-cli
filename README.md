@@ -1,4 +1,4 @@
-# cleanr 🧹
+# zapr ⚡
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![Build](https://img.shields.io/badge/Build-unbuild-cyan.svg)](https://github.com/unjs/unbuild)
@@ -15,7 +15,7 @@ Blazing fast, class-based, object-oriented CLI tool to scan and purge `node_modu
 Run directly using `npx`:
 
 ```bash
-npx cleanr -p ./projects
+npx zapr -p ./projects
 ```
 
 ---
@@ -35,13 +35,14 @@ npx cleanr -p ./projects
 
 ## 🛠️ CLI Options
 
-| Flag        | Short | Description                                              | Default |
-| :---------- | :---- | :------------------------------------------------------- | :------ |
-| `--path`    | `-p`  | **(Required)** Path to directory root to scan            | _None_  |
-| `--dry-run` | `-d`  | Preview scan results and disk space without deleting     | `false` |
-| `--yes`     | `-y`  | Skip interactive prompt and execute deletion immediately | `false` |
-| `--exclude` | `-e`  | Comma-separated folder names to skip scanning            | `[]`    |
-| `--debug`   |       | Enable verbose error stack traces                        | `false` |
+| Flag            | Short | Description                                              | Default |
+| :-------------- | :---- | :------------------------------------------------------- | :------ |
+| `--path`        | `-p`  | **(Required)** Path to directory root to scan            | _None_  |
+| `--dry-run`     | `-d`  | Preview scan results and disk space without deleting     | `false` |
+| `--yes`         | `-y`  | Skip interactive prompt and execute deletion immediately | `false` |
+| `--exclude`     | `-e`  | Comma-separated folder names to skip scanning            | `[]`    |
+| `--concurrency` | `-c`  | Maximum concurrent directory purges                      | `5`     |
+| `--debug`       |       | Enable verbose error stack traces                        | `false` |
 
 ---
 
@@ -50,31 +51,31 @@ npx cleanr -p ./projects
 ### Preview reclaimable space without deleting (Dry-Run):
 
 ```bash
-npx cleanr -p ./workspaces -d
+npx zapr -p ./workspaces -d
 ```
 
 ### Delete immediately without confirmation prompts:
 
 ```bash
-npx cleanr -p ./workspaces -y
+npx zapr -p ./workspaces -y
 ```
 
 ### Exclude specific directories:
 
 ```bash
-npx cleanr -p ./workspaces -e "archive,temp-projects"
+npx zapr -p ./workspaces -e "archive,temp-projects"
 ```
 
 ---
 
 ## 📦 Programmatic Library API
 
-`cleanr` can also be imported directly into your Node.js TypeScript projects:
+`zapr` can also be imported directly into your Node.js TypeScript projects:
 
 ```typescript
-import { CleanrApp, DirectoryScanner, FolderCleaner } from 'cleanr';
+import { ZaprApp, DirectoryScanner, FolderCleaner } from 'zapr';
 
-const app = new CleanrApp();
+const app = new ZaprApp();
 
 await app.run({
   path: './my-workspace',

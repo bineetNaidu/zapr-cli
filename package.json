@@ -1,5 +1,5 @@
 {
-  "name": "cleanr",
+  "name": "zapr",
   "version": "1.0.0",
   "description": "Blazing fast node_modules and build output cleaner CLI tool",
   "type": "module",
@@ -13,7 +13,7 @@
     }
   },
   "bin": {
-    "cleanr": "./bin/cleanr.mjs"
+    "zapr": "./bin/zapr.mjs"
   },
   "files": [
     "dist",

@@ -5,12 +5,12 @@ import type { DiscoveredTarget, ScanResult } from '../types/index.js';
 export class TerminalLogger {
   private readonly logger = createConsola({
     defaults: {
-      tag: 'cleanr',
+      tag: 'zapr',
     },
   });
 
   showBanner(): void {
-    this.logger.log(`\n  ${pc.bold(pc.bgCyan(pc.black(' cleanr ')))} ${pc.dim('v1.0.0')}\n`);
+    this.logger.log(`\n  ${pc.bold(pc.bgCyan(pc.black(' zapr ')))} ${pc.dim('v1.0.0')}\n`);
   }
 
   showDryRunWarning(): void {
