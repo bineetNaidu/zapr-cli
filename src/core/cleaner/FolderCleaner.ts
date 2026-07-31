@@ -1,17 +1,18 @@
 import fs from 'node:fs/promises';
 import type { CleanOptions, CleanResult, DiscoveredTarget } from '../../types/index.js';
 import { formatBytes } from '../../utils/formatters.js';
+import { concurrentMap } from '../../utils/concurrency.js';
 
 /**
  * Service responsible for executing deletion of targeted node_modules folders.
- * 
+ *
  * Implements strict dry-run safeguards and emits real-time progress callbacks
  * as purge operations succeed or encounter permission issues.
  */
 export class FolderCleaner {
   /**
    * Safely deletes discovered target directories in parallel.
-   * 
+   *
    * @param targets - Discovered projects and their node_modules directory paths.
    * @param options - Execution flags (e.g. dryRun) and event notification callbacks.
    */
@@ -31,22 +32,21 @@ export class FolderCleaner {
     }
 
     let completed = 0;
+    const limit = options.concurrency;
 
-    // Purge target directories asynchronously
-    await Promise.all(
-      allPaths.map(async (targetPath) => {
-        try {
-          await fs.rm(targetPath, { recursive: true, force: true });
-          successCount++;
-          completed++;
-          options.onItemPurged?.(completed, allPaths.length, targetPath);
-        } catch (err) {
-          failedCount++;
-          const message = err instanceof Error ? err.message : 'Unknown error';
-          options.onItemFailed?.(targetPath, message);
-        }
-      }),
-    );
+    // Purge target directories asynchronously with concurrency capping
+    await concurrentMap(allPaths, limit, async (targetPath) => {
+      try {
+        await fs.rm(targetPath, { recursive: true, force: true });
+        successCount++;
+        completed++;
+        options.onItemPurged?.(completed, allPaths.length, targetPath);
+      } catch (err) {
+        failedCount++;
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        options.onItemFailed?.(targetPath, message);
+      }
+    });
 
     return {
       successCount,

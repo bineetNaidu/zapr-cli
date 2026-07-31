@@ -12,7 +12,7 @@ import { InvalidPathError, PathNotFoundError } from './errors/CliError.js';
 
 /**
  * Main application orchestrator for Cleanr.
- * 
+ *
  * Coordinates interaction between scanner engine, cleaning engine, logger, and user UI.
  * Can be instantiated directly by Node apps or invoked via CLI runner.
  */
@@ -57,7 +57,9 @@ export class CleanrApp {
     this.logger.showBanner();
 
     if (!options.path) {
-      throw new InvalidPathError('Please explicitly specify a path using --path or -p (e.g. cleanr -p ./projects)');
+      throw new InvalidPathError(
+        'Please explicitly specify a path using --path or -p (e.g. cleanr -p ./projects)',
+      );
     }
 
     const resolvedPath = resolveAbsolutePath(options.path);
@@ -111,10 +113,10 @@ export class CleanrApp {
     const cleanResult = await this.cleaner.clean(scanResult.targets, {
       dryRun: scanOptions.dryRun,
       confirm: true,
+      concurrency: 5,
       onItemPurged: (current, total, targetPath) =>
         this.logger.showPurgedItem(current, total, targetPath),
-      onItemFailed: (targetPath, errorMsg) =>
-        this.logger.showPurgeError(targetPath, errorMsg),
+      onItemFailed: (targetPath, errorMsg) => this.logger.showPurgeError(targetPath, errorMsg),
     });
 
     this.logger.showDeletionSuccess(cleanResult.successCount, scanResult.formattedSize);

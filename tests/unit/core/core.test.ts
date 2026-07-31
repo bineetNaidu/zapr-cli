@@ -38,7 +38,7 @@ describe('DirectoryScanner & FolderCleaner', () => {
       excludedFolders: [],
     });
 
-    await cleaner.clean(result.targets, { dryRun: true, confirm: true });
+    await cleaner.clean(result.targets, { dryRun: true, confirm: true, concurrency: 5 });
 
     const exists = await fs.stat(path.join(TEST_DIR, 'project-a', 'node_modules')).catch(() => null);
     expect(exists).not.toBeNull();

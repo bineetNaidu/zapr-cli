@@ -9,6 +9,7 @@ export interface ScanOptions {
 export interface CleanOptions {
   dryRun: boolean;
   confirm: boolean;
+  concurrency: number;
   onItemPurged?: (current: number, total: number, targetPath: string) => void;
   onItemFailed?: (targetPath: string, errorMsg: string) => void;
 }
