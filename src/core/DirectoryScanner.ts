@@ -24,13 +24,35 @@ export class DirectoryScanner {
 
     const topLevelEntries = await fs.readdir(rootPath, { withFileTypes: true });
 
+    // Check if the root directory itself contains node_modules directly
+    const rootNodeModules = topLevelEntries.find(
+      (entry) => entry.isDirectory() && entry.name === 'node_modules',
+    );
+
+    if (rootNodeModules) {
+      const nmPath = path.join(rootPath, 'node_modules');
+      const size = await this.diskCalculator.calculateDirectorySize(nmPath);
+      totalSizeBytes += size;
+      targets.push({
+        folderName: path.basename(rootPath),
+        projectFolderPath: rootPath,
+        nodeModulesPaths: [nmPath],
+      });
+    }
+
     for (const entry of topLevelEntries) {
       if (!entry.isDirectory() || excluded.has(entry.name)) {
+        if (entry.isDirectory() && excluded.has(entry.name)) {
+          options.onSkippedFolder?.(entry.name);
+        }
         continue;
       }
 
+      if (entry.name === 'node_modules') continue;
+
+      options.onScanningFolder?.(entry.name);
       const projectFolderPath = path.join(rootPath, entry.name);
-      const discoveredPaths = await this.findNodeModules(projectFolderPath, excluded);
+      const discoveredPaths = await this.findNodeModules(projectFolderPath, excluded, options);
 
       if (discoveredPaths.length > 0) {
         targets.push({
@@ -60,7 +82,11 @@ export class DirectoryScanner {
   /**
    * Recursively crawl directories to discover node_modules folders while skipping excluded names.
    */
-  private async findNodeModules(dirPath: string, excluded: Set<string>): Promise<string[]> {
+  private async findNodeModules(
+    dirPath: string,
+    excluded: Set<string>,
+    options: ScanOptions,
+  ): Promise<string[]> {
     let foundPaths: string[] = [];
 
     try {
@@ -68,14 +94,17 @@ export class DirectoryScanner {
 
       for (const entry of entries) {
         if (!entry.isDirectory()) continue;
-        if (excluded.has(entry.name)) continue;
+        if (excluded.has(entry.name)) {
+          options.onSkippedFolder?.(entry.name);
+          continue;
+        }
 
         const fullPath = path.join(dirPath, entry.name);
 
         if (entry.name === 'node_modules') {
           foundPaths.push(fullPath);
         } else {
-          const subPaths = await this.findNodeModules(fullPath, excluded);
+          const subPaths = await this.findNodeModules(fullPath, excluded, options);
           foundPaths = foundPaths.concat(subPaths);
         }
       }
