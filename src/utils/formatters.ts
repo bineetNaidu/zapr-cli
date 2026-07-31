@@ -12,14 +12,14 @@ export function resolveAbsolutePath(targetPath: string): string {
 }
 
 /**
- * Checks if a directory path exists on disk.
+ * Checks if a path exists and whether it is a directory.
  */
-export async function directoryExists(dirPath: string): Promise<boolean> {
+export async function getPathType(dirPath: string): Promise<{ exists: boolean; isDirectory: boolean }> {
   try {
     const stat = await fs.stat(dirPath);
-    return stat.isDirectory();
+    return { exists: true, isDirectory: stat.isDirectory() };
   } catch {
-    return false;
+    return { exists: false, isDirectory: false };
   }
 }
 

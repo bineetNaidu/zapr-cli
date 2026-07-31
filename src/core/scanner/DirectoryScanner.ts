@@ -8,7 +8,7 @@ import { PathNotFoundError, PermissionError } from '../../errors/CliError.js';
 
 /**
  * Core engine responsible for scanning workspace trees to locate node_modules directories.
- * 
+ *
  * Traverses file systems efficiently while respecting exclusion rules and emitting progress hooks.
  */
 export class DirectoryScanner {
@@ -20,7 +20,7 @@ export class DirectoryScanner {
 
   /**
    * Scans a target root directory recursively to discover all target folders.
-   * 
+   *
    * @param options - Configuration including path, exclusion rules, and event callbacks.
    * @returns Detailed summary containing discovered targets, aggregate byte sizes, and duration.
    */
@@ -67,6 +67,8 @@ export class DirectoryScanner {
 
     // Scenario 2: Iterate through child directories to locate nested projects
     for (const entry of topLevelEntries) {
+      if (entry.isSymbolicLink()) continue; // ⏭️ SKIP THIS SYMLINK! Move immediately to the next entry in the folder.
+
       if (!entry.isDirectory() || excluded.has(entry.name)) {
         if (entry.isDirectory() && excluded.has(entry.name)) {
           options.onSkippedFolder(entry.name);
@@ -122,7 +124,7 @@ export class DirectoryScanner {
       const entries = await fs.readdir(dirPath, { withFileTypes: true });
 
       for (const entry of entries) {
-        if (!entry.isDirectory()) continue;
+        if (entry.isSymbolicLink() || !entry.isDirectory()) continue;
         if (excluded.has(entry.name)) {
           options.onSkippedFolder(entry.name);
           continue;

@@ -21,6 +21,8 @@ export class DiskCalculator {
       const entries = await fs.readdir(dirPath, { withFileTypes: true });
 
       for (const entry of entries) {
+        if (entry.isSymbolicLink()) continue;
+
         const fullPath = path.join(dirPath, entry.name);
 
         if (entry.isDirectory()) {
@@ -28,7 +30,7 @@ export class DiskCalculator {
           totalBytes += await this.calculateDirectorySize(fullPath);
         } else if (entry.isFile()) {
           try {
-            const stat = await fs.stat(fullPath);
+            const stat = await fs.lstat(fullPath);
             totalBytes += stat.size;
           } catch {
             // Silently ignore permissions or lock errors on individual files

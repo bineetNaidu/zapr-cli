@@ -4,7 +4,7 @@ import { TerminalLogger } from './ui/TerminalLogger.js';
 import { PromptService } from './ui/PromptService.js';
 import { DEFAULT_EXCLUDED_FOLDERS } from './config/defaults.js';
 import type { ScanOptions } from './types/index.js';
-import { directoryExists, resolveAbsolutePath } from './utils/formatters.js';
+import { getPathType, resolveAbsolutePath } from './utils/formatters.js';
 
 import { ErrorHandler } from './errors/ErrorHandler.js';
 import { SignalHandler } from './utils/SignalHandler.js';
@@ -63,10 +63,14 @@ export class CleanrApp {
     }
 
     const resolvedPath = resolveAbsolutePath(options.path);
-    const exists = await directoryExists(resolvedPath);
+    const { exists, isDirectory } = await getPathType(resolvedPath);
 
     if (!exists) {
       throw new PathNotFoundError(resolvedPath);
+    }
+
+    if (!isDirectory) {
+      throw new InvalidPathError(`Specified path is a file, not a directory: ${resolvedPath}`);
     }
 
     const scanOptions: ScanOptions = {
