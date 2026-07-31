@@ -1,0 +1,42 @@
+name: Bug report
+description: Create a report to help us improve cleanr
+title: '[BUG] '
+labels: ['bug']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Run `npx cleanr -p ./my-workspace`
+        2. Observe error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Info
+      description: |
+        - OS: [e.g. macOS, Linux, Windows]
+        - Node Version: [e.g. 20.10.0]
+        - Cleanr Version: [e.g. 1.0.0]
+    validations:
+      required: true
