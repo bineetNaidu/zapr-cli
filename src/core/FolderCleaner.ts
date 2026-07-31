@@ -20,13 +20,19 @@ export class FolderCleaner {
       };
     }
 
+    let completed = 0;
+
     await Promise.all(
       allPaths.map(async (targetPath) => {
         try {
           await fs.rm(targetPath, { recursive: true, force: true });
           successCount++;
-        } catch {
+          completed++;
+          options.onItemPurged?.(completed, allPaths.length, targetPath);
+        } catch (err) {
           failedCount++;
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          options.onItemFailed?.(targetPath, message);
         }
       }),
     );
