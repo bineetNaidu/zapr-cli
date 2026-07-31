@@ -1,4 +1,4 @@
-# zapr ⚡
+# zapr-cli ⚡
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![Build](https://img.shields.io/badge/Build-unbuild-cyan.svg)](https://github.com/unjs/unbuild)
@@ -15,7 +15,7 @@ Blazing fast, class-based, object-oriented CLI tool to scan and purge `node_modu
 Run directly using `npx`:
 
 ```bash
-npx zapr -p ./projects
+npx zapr-cli -p ./projects
 ```
 
 ---
@@ -51,29 +51,29 @@ npx zapr -p ./projects
 ### Preview reclaimable space without deleting (Dry-Run):
 
 ```bash
-npx zapr -p ./workspaces -d
+npx zapr-cli -p ./workspaces -d
 ```
 
 ### Delete immediately without confirmation prompts:
 
 ```bash
-npx zapr -p ./workspaces -y
+npx zapr-cli -p ./workspaces -y
 ```
 
 ### Exclude specific directories:
 
 ```bash
-npx zapr -p ./workspaces -e "archive,temp-projects"
+npx zapr-cli -p ./workspaces -e "archive,temp-projects"
 ```
 
 ---
 
 ## 📦 Programmatic Library API
 
-`zapr` can also be imported directly into your Node.js TypeScript projects:
+`zapr-cli` can also be imported directly into your Node.js TypeScript projects:
 
 ```typescript
-import { ZaprApp, DirectoryScanner, FolderCleaner } from 'zapr';
+import { ZaprApp, DirectoryScanner, FolderCleaner } from 'zapr-cli';
 
 const app = new ZaprApp();
 

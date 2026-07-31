@@ -1,5 +1,5 @@
 {
-  "name": "zapr",
+  "name": "zapr-cli",
   "version": "1.0.0",
   "description": "Blazing fast node_modules and build output cleaner CLI tool",
   "type": "module",
@@ -13,7 +13,8 @@
     }
   },
   "bin": {
-    "zapr": "./bin/zapr.mjs"
+    "zapr": "./bin/zapr.mjs",
+    "zapr-cli": "./bin/zapr.mjs"
   },
   "files": [
     "dist",
