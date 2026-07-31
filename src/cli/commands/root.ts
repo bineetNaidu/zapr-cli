@@ -37,6 +37,12 @@ export const rootCommand = defineCommand({
       alias: 'e',
       description: 'Folder name(s) to skip scanning (comma-separated)',
     },
+    concurrency: {
+      type: 'string',
+      alias: 'c',
+      description: 'Maximum concurrent directory purges (Default: 5)',
+      default: '5',
+    },
     debug: {
       type: 'boolean',
       description: 'Enable verbose error stack traces',
@@ -45,6 +51,7 @@ export const rootCommand = defineCommand({
   },
   async run({ args }) {
     const excludeList = args.exclude ? args.exclude.split(',').map((s) => s.trim()) : [];
+    const concurrencyNum = parseInt(args.concurrency, 10) || 5;
     const app = new CleanrApp();
 
     try {
@@ -53,6 +60,7 @@ export const rootCommand = defineCommand({
         dryRun: args['dry-run'],
         yes: args.yes,
         exclude: excludeList,
+        concurrency: concurrencyNum,
       });
     } catch (err: unknown) {
       const exitCode = app.getErrorHandler().handle(err, args.debug);

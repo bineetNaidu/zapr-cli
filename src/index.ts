@@ -52,6 +52,7 @@ export class CleanrApp {
     dryRun?: boolean;
     yes?: boolean;
     exclude?: string[];
+    concurrency?: number;
   }): Promise<void> {
     this.signalHandler.register();
     this.logger.showBanner();
@@ -116,7 +117,7 @@ export class CleanrApp {
     this.logger.showDeletionStart(scanResult.totalNodeModulesCount);
     const cleanResult = await this.cleaner.clean(scanResult.targets, {
       dryRun: scanOptions.dryRun,
-      concurrency: 5,
+      concurrency: options.concurrency ?? 5,
       onItemPurged: (current, total, targetPath) =>
         this.logger.showPurgedItem(current, total, targetPath),
       onItemFailed: (targetPath, errorMsg) => this.logger.showPurgeError(targetPath, errorMsg),
