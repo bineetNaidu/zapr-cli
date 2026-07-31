@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatBytes, formatDuration, resolveAbsolutePath } from '../src/utils/formatters.js';
+import { formatBytes, formatDuration, resolveAbsolutePath } from '../../../src/utils/formatters.js';
 
 describe('formatters & utils', () => {
   it('formats bytes correctly', () => {

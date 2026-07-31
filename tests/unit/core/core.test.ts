@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { DirectoryScanner } from '../src/core/DirectoryScanner.js';
-import { FolderCleaner } from '../src/core/FolderCleaner.js';
+import { DirectoryScanner } from '../../../src/core/scanner/DirectoryScanner.js';
+import { FolderCleaner } from '../../../src/core/cleaner/FolderCleaner.js';
 
 const TEST_DIR = path.resolve('./temp-test-workspace');
 
