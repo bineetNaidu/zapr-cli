@@ -2,11 +2,15 @@ export interface ScanOptions {
   targetPath: string;
   dryRun: boolean;
   excludedFolders: string[];
+  onScanningFolder?: (folderName: string) => void;
+  onSkippedFolder?: (folderName: string) => void;
 }
 
 export interface CleanOptions {
   dryRun: boolean;
   confirm: boolean;
+  onItemPurged?: (current: number, total: number, targetPath: string) => void;
+  onItemFailed?: (targetPath: string, errorMsg: string) => void;
 }
 
 export interface DiscoveredTarget {
