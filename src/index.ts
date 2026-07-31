@@ -75,6 +75,7 @@ export class CleanrApp {
       excludedFolders: [...DEFAULT_EXCLUDED_FOLDERS, ...(options.exclude ?? [])],
       onScanningFolder: (folderName) => this.logger.showScanningFolder(folderName),
       onSkippedFolder: (folderName) => this.logger.showSkippedFolder(folderName),
+      onTargetDiscovered: (target) => this.logger.showDiscoveredTarget(target),
     };
 
     if (scanOptions.dryRun) {
@@ -89,7 +90,6 @@ export class CleanrApp {
       return;
     }
 
-    scanResult.targets.forEach((t) => this.logger.showDiscoveredTarget(t));
     this.logger.showScanSummary(scanResult);
 
     if (scanOptions.dryRun) {

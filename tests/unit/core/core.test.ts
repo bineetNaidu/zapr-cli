@@ -18,10 +18,17 @@ describe('DirectoryScanner & FolderCleaner', () => {
 
   it('scans and discovers node_modules folders', async () => {
     const scanner = new DirectoryScanner();
+    const dummyCallbacks = {
+      onScanningFolder: () => {},
+      onSkippedFolder: () => {},
+      onTargetDiscovered: () => {},
+    };
+
     const result = await scanner.scan({
       targetPath: TEST_DIR,
       dryRun: true,
       excludedFolders: [],
+      ...dummyCallbacks,
     });
 
     expect(result.totalNodeModulesCount).toBe(2);
@@ -32,13 +39,26 @@ describe('DirectoryScanner & FolderCleaner', () => {
     const scanner = new DirectoryScanner();
     const cleaner = new FolderCleaner();
 
+    const dummyCallbacks = {
+      onScanningFolder: () => {},
+      onSkippedFolder: () => {},
+      onTargetDiscovered: () => {},
+    };
+
     const result = await scanner.scan({
       targetPath: TEST_DIR,
       dryRun: true,
       excludedFolders: [],
+      ...dummyCallbacks,
     });
 
-    await cleaner.clean(result.targets, { dryRun: true, confirm: true, concurrency: 5 });
+    await cleaner.clean(result.targets, {
+      dryRun: true,
+      confirm: true,
+      concurrency: 5,
+      onItemPurged: () => {},
+      onItemFailed: () => {},
+    });
 
     const exists = await fs.stat(path.join(TEST_DIR, 'project-a', 'node_modules')).catch(() => null);
     expect(exists).not.toBeNull();

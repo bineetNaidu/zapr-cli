@@ -40,11 +40,11 @@ export class FolderCleaner {
         await fs.rm(targetPath, { recursive: true, force: true });
         successCount++;
         completed++;
-        options.onItemPurged?.(completed, allPaths.length, targetPath);
+        options.onItemPurged(completed, allPaths.length, targetPath);
       } catch (err) {
         failedCount++;
         const message = err instanceof Error ? err.message : 'Unknown error';
-        options.onItemFailed?.(targetPath, message);
+        options.onItemFailed(targetPath, message);
       }
     });
 

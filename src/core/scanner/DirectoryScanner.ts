@@ -56,34 +56,39 @@ export class DirectoryScanner {
       const nmPath = path.join(rootPath, TARGET_FOLDER_NAME);
       const size = await this.diskCalculator.calculateDirectorySize(nmPath);
       totalSizeBytes += size;
-      targets.push({
+      const target: DiscoveredTarget = {
         folderName: path.basename(rootPath),
         projectFolderPath: rootPath,
         nodeModulesPaths: [nmPath],
-      });
+      };
+      targets.push(target);
+      options.onTargetDiscovered(target);
     }
 
     // Scenario 2: Iterate through child directories to locate nested projects
     for (const entry of topLevelEntries) {
       if (!entry.isDirectory() || excluded.has(entry.name)) {
         if (entry.isDirectory() && excluded.has(entry.name)) {
-          options.onSkippedFolder?.(entry.name);
+          options.onSkippedFolder(entry.name);
         }
         continue;
       }
 
       if (entry.name === TARGET_FOLDER_NAME) continue;
 
-      options.onScanningFolder?.(entry.name);
+      options.onScanningFolder(entry.name);
       const projectFolderPath = path.join(rootPath, entry.name);
       const discoveredPaths = await this.findNodeModules(projectFolderPath, excluded, options);
 
       if (discoveredPaths.length > 0) {
-        targets.push({
+        const target: DiscoveredTarget = {
           folderName: entry.name,
           projectFolderPath,
           nodeModulesPaths: discoveredPaths,
-        });
+        };
+
+        targets.push(target);
+        options.onTargetDiscovered(target);
 
         for (const nmPath of discoveredPaths) {
           totalSizeBytes += await this.diskCalculator.calculateDirectorySize(nmPath);
@@ -119,7 +124,7 @@ export class DirectoryScanner {
       for (const entry of entries) {
         if (!entry.isDirectory()) continue;
         if (excluded.has(entry.name)) {
-          options.onSkippedFolder?.(entry.name);
+          options.onSkippedFolder(entry.name);
           continue;
         }
 
