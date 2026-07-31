@@ -82,7 +82,12 @@ export class DirectoryScanner {
 
       options.onScanningFolder(entry.name);
       const projectFolderPath = path.join(rootPath, entry.name);
-      const discoveredPaths = await this.findTargetDirectories(projectFolderPath, excluded, targetSet, options);
+      const discoveredPaths = await this.findTargetDirectories(
+        projectFolderPath,
+        excluded,
+        targetSet,
+        options,
+      );
 
       if (discoveredPaths.length > 0) {
         const target: DiscoveredTarget = {

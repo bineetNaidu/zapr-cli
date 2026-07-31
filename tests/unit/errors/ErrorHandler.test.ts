@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { ErrorHandler } from '../../../src/errors/ErrorHandler.js';
+import { describe, expect, it, vi } from 'vitest';
 import { PathNotFoundError, ProcessInterruptedError } from '../../../src/errors/CliError.js';
+import { ErrorHandler } from '../../../src/errors/ErrorHandler.js';
 import type { TerminalLogger } from '../../../src/ui/TerminalLogger.js';
 
 describe('ErrorHandler', () => {

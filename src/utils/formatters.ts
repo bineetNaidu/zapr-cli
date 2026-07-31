@@ -14,7 +14,9 @@ export function resolveAbsolutePath(targetPath: string): string {
 /**
  * Checks if a path exists and whether it is a directory.
  */
-export async function getPathType(dirPath: string): Promise<{ exists: boolean; isDirectory: boolean }> {
+export async function getPathType(
+  dirPath: string,
+): Promise<{ exists: boolean; isDirectory: boolean }> {
   try {
     const stat = await fs.stat(dirPath);
     return { exists: true, isDirectory: stat.isDirectory() };

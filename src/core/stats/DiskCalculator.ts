@@ -3,14 +3,14 @@ import path from 'node:path';
 
 /**
  * Service responsible for recursively measuring directory disk usage in bytes.
- * 
+ *
  * Performs high-speed async filesystem walks, gracefully skipping unreadable
  * or restricted files without aborting the overarching calculation process.
  */
 export class DiskCalculator {
   /**
    * Recursively calculates the aggregate disk size of all files inside a given folder.
-   * 
+   *
    * @param dirPath - Absolute path to the folder being measured.
    * @returns Total byte size of all accessible files contained within.
    */

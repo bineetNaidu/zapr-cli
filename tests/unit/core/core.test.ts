@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { DirectoryScanner } from '../../../src/core/scanner/DirectoryScanner.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { FolderCleaner } from '../../../src/core/cleaner/FolderCleaner.js';
+import { DirectoryScanner } from '../../../src/core/scanner/DirectoryScanner.js';
 
 const TEST_DIR = path.resolve('./temp-test-workspace');
 
@@ -59,7 +59,9 @@ describe('DirectoryScanner & FolderCleaner', () => {
       onItemFailed: () => {},
     });
 
-    const exists = await fs.stat(path.join(TEST_DIR, 'project-a', 'node_modules')).catch(() => null);
+    const exists = await fs
+      .stat(path.join(TEST_DIR, 'project-a', 'node_modules'))
+      .catch(() => null);
     expect(exists).not.toBeNull();
   });
 });
