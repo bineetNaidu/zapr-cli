@@ -1,9 +1,15 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { DiscoveredTarget, ScanOptions, ScanResult } from '../types/index.js';
-import { DiskCalculator } from './DiskCalculator.js';
-import { formatBytes, formatDuration, resolveAbsolutePath } from '../utils/formatters.js';
+import type { DiscoveredTarget, ScanOptions, ScanResult } from '../../types/index.js';
+import { DiskCalculator } from '../stats/DiskCalculator.js';
+import { formatBytes, formatDuration, resolveAbsolutePath } from '../../utils/formatters.js';
+import { TARGET_FOLDER_NAME } from '../../config/defaults.js';
 
+/**
+ * Core engine responsible for scanning workspace trees to locate node_modules directories.
+ * 
+ * Traverses file systems efficiently while respecting exclusion rules and emitting progress hooks.
+ */
 export class DirectoryScanner {
   private readonly diskCalculator: DiskCalculator;
 
@@ -12,7 +18,10 @@ export class DirectoryScanner {
   }
 
   /**
-   * Scans a target path recursively for target node_modules directories.
+   * Scans a target root directory recursively to discover all target folders.
+   * 
+   * @param options - Configuration including path, exclusion rules, and event callbacks.
+   * @returns Detailed summary containing discovered targets, aggregate byte sizes, and duration.
    */
   async scan(options: ScanOptions): Promise<ScanResult> {
     const startTime = Date.now();
@@ -24,13 +33,13 @@ export class DirectoryScanner {
 
     const topLevelEntries = await fs.readdir(rootPath, { withFileTypes: true });
 
-    // Check if the root directory itself contains node_modules directly
+    // Scenario 1: Check if the specified root directory itself is a direct node_modules container
     const rootNodeModules = topLevelEntries.find(
-      (entry) => entry.isDirectory() && entry.name === 'node_modules',
+      (entry) => entry.isDirectory() && entry.name === TARGET_FOLDER_NAME,
     );
 
     if (rootNodeModules) {
-      const nmPath = path.join(rootPath, 'node_modules');
+      const nmPath = path.join(rootPath, TARGET_FOLDER_NAME);
       const size = await this.diskCalculator.calculateDirectorySize(nmPath);
       totalSizeBytes += size;
       targets.push({
@@ -40,6 +49,7 @@ export class DirectoryScanner {
       });
     }
 
+    // Scenario 2: Iterate through child directories to locate nested projects
     for (const entry of topLevelEntries) {
       if (!entry.isDirectory() || excluded.has(entry.name)) {
         if (entry.isDirectory() && excluded.has(entry.name)) {
@@ -48,7 +58,7 @@ export class DirectoryScanner {
         continue;
       }
 
-      if (entry.name === 'node_modules') continue;
+      if (entry.name === TARGET_FOLDER_NAME) continue;
 
       options.onScanningFolder?.(entry.name);
       const projectFolderPath = path.join(rootPath, entry.name);
@@ -80,7 +90,7 @@ export class DirectoryScanner {
   }
 
   /**
-   * Recursively crawl directories to discover node_modules folders while skipping excluded names.
+   * Helper function to recursively crawl nested folders looking for node_modules directory matches.
    */
   private async findNodeModules(
     dirPath: string,
@@ -101,7 +111,7 @@ export class DirectoryScanner {
 
         const fullPath = path.join(dirPath, entry.name);
 
-        if (entry.name === 'node_modules') {
+        if (entry.name === TARGET_FOLDER_NAME) {
           foundPaths.push(fullPath);
         } else {
           const subPaths = await this.findNodeModules(fullPath, excluded, options);
@@ -109,7 +119,7 @@ export class DirectoryScanner {
         }
       }
     } catch {
-      // Ignore directory read/permission errors
+      // Gracefully bypass permission/read errors on inaccessible subdirectories
     }
 
     return foundPaths;

@@ -1,9 +1,18 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+/**
+ * Service responsible for recursively measuring directory disk usage in bytes.
+ * 
+ * Performs high-speed async filesystem walks, gracefully skipping unreadable
+ * or restricted files without aborting the overarching calculation process.
+ */
 export class DiskCalculator {
   /**
-   * Recursively calculates the total disk size of a directory in bytes.
+   * Recursively calculates the aggregate disk size of all files inside a given folder.
+   * 
+   * @param dirPath - Absolute path to the folder being measured.
+   * @returns Total byte size of all accessible files contained within.
    */
   async calculateDirectorySize(dirPath: string): Promise<number> {
     let totalBytes = 0;
@@ -15,18 +24,19 @@ export class DiskCalculator {
         const fullPath = path.join(dirPath, entry.name);
 
         if (entry.isDirectory()) {
+          // Recursively calculate sub-folder size
           totalBytes += await this.calculateDirectorySize(fullPath);
         } else if (entry.isFile()) {
           try {
             const stat = await fs.stat(fullPath);
             totalBytes += stat.size;
           } catch {
-            // Ignore access errors on individual files
+            // Silently ignore permissions or lock errors on individual files
           }
         }
       }
     } catch {
-      // Ignore directory access errors
+      // Ignore unreadable directories
     }
 
     return totalBytes;
