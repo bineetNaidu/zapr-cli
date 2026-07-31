@@ -1,11 +1,17 @@
-import { DirectoryScanner } from './core/DirectoryScanner.js';
-import { FolderCleaner } from './core/FolderCleaner.js';
+import { DirectoryScanner } from './core/scanner/DirectoryScanner.js';
+import { FolderCleaner } from './core/cleaner/FolderCleaner.js';
 import { TerminalLogger } from './ui/TerminalLogger.js';
 import { PromptService } from './ui/PromptService.js';
-import { DEFAULT_EXCLUDED_FOLDERS } from './constants/defaults.js';
+import { DEFAULT_EXCLUDED_FOLDERS } from './config/defaults.js';
 import type { ScanOptions } from './types/index.js';
 import { directoryExists, resolveAbsolutePath } from './utils/formatters.js';
 
+/**
+ * Main application orchestrator for Cleanr.
+ * 
+ * Coordinates interaction between scanner engine, cleaning engine, logger, and user UI.
+ * Can be instantiated directly by Node apps or invoked via CLI runner.
+ */
 export class CleanrApp {
   private readonly scanner: DirectoryScanner;
   private readonly cleaner: FolderCleaner;
@@ -24,6 +30,9 @@ export class CleanrApp {
     this.promptService = promptService;
   }
 
+  /**
+   * Executes a full scan and optional cleanup workflow based on provided user options.
+   */
   async run(options: {
     path?: string;
     dryRun?: boolean;
@@ -98,3 +107,9 @@ export class CleanrApp {
     this.logger.showDeletionSuccess(cleanResult.successCount, scanResult.formattedSize);
   }
 }
+
+// Re-export core modules for library consumer usage
+export { DirectoryScanner } from './core/scanner/DirectoryScanner.js';
+export { FolderCleaner } from './core/cleaner/FolderCleaner.js';
+export { DiskCalculator } from './core/stats/DiskCalculator.js';
+export { CliError } from './errors/CliError.js';
