@@ -9,7 +9,7 @@ export class PromptService {
     if (count === 0) return false;
 
     const answer = await consola.prompt(
-      `Are you sure you want to permanently delete ${pc.yellow(count.toString())} 'node_modules' folder(s) freeing ${pc.green(formattedSize)}?`,
+      `${pc.bold(pc.cyan('?'))} Permanently delete ${pc.bold(pc.yellow(count.toString()))} target folder(s) freeing ${pc.bold(pc.green(formattedSize))}?`,
       {
         type: 'confirm',
         initial: false,
