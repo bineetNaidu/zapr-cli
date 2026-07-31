@@ -54,7 +54,6 @@ describe('DirectoryScanner & FolderCleaner', () => {
 
     await cleaner.clean(result.targets, {
       dryRun: true,
-      confirm: true,
       concurrency: 5,
       onItemPurged: () => {},
       onItemFailed: () => {},

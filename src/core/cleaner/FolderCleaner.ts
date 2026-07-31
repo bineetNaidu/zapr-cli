@@ -1,6 +1,5 @@
 import fs from 'node:fs/promises';
 import type { CleanOptions, CleanResult, DiscoveredTarget } from '../../types/index.js';
-import { formatBytes } from '../../utils/formatters.js';
 import { concurrentMap } from '../../utils/concurrency.js';
 
 /**
@@ -26,8 +25,6 @@ export class FolderCleaner {
       return {
         successCount: 0,
         failedCount: 0,
-        totalSizeBytes: 0,
-        formattedSizeFreed: formatBytes(0),
       };
     }
 
@@ -51,8 +48,6 @@ export class FolderCleaner {
     return {
       successCount,
       failedCount,
-      totalSizeBytes: 0,
-      formattedSizeFreed: formatBytes(0),
     };
   }
 }

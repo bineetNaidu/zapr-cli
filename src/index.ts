@@ -112,7 +112,6 @@ export class CleanrApp {
     this.logger.showDeletionStart(scanResult.totalNodeModulesCount);
     const cleanResult = await this.cleaner.clean(scanResult.targets, {
       dryRun: scanOptions.dryRun,
-      confirm: true,
       concurrency: 5,
       onItemPurged: (current, total, targetPath) =>
         this.logger.showPurgedItem(current, total, targetPath),
