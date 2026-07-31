@@ -1,21 +1,41 @@
-/**
- * Custom operational error class for Cleanr CLI.
- * 
- * Provides human-readable error messages alongside specific exit codes
- * to ensure graceful failures and predictable CLI exit statuses.
- */
-export class CliError extends Error {
-  /**
-   * Numeric process exit code (e.g., 1 for general error, 2 for invalid arguments).
-   */
-  public readonly exitCode: number;
+export abstract class CliError extends Error {
+  public abstract readonly exitCode: number;
 
-  constructor(message: string, exitCode = 1) {
+  constructor(message: string) {
     super(message);
-    this.name = 'CliError';
-    this.exitCode = exitCode;
+    this.name = this.constructor.name;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
 
-    // Restore standard prototype chain for custom Error classes in TypeScript
-    Object.setPrototypeOf(this, CliError.prototype);
+export class PathNotFoundError extends CliError {
+  public readonly exitCode = 1;
+
+  constructor(path: string) {
+    super(`Specified directory path does not exist: ${path}`);
+  }
+}
+
+export class InvalidPathError extends CliError {
+  public readonly exitCode = 1;
+
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+export class PermissionError extends CliError {
+  public readonly exitCode = 1;
+
+  constructor(targetPath: string, action: string) {
+    super(`Permission denied while trying to ${action}: ${targetPath}`);
+  }
+}
+
+export class ProcessInterruptedError extends CliError {
+  public readonly exitCode = 130;
+
+  constructor() {
+    super('Operation interrupted by user (Ctrl+C). Partial operations may remain.');
   }
 }

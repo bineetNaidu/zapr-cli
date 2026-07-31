@@ -6,6 +6,10 @@ import { DEFAULT_EXCLUDED_FOLDERS } from './config/defaults.js';
 import type { ScanOptions } from './types/index.js';
 import { directoryExists, resolveAbsolutePath } from './utils/formatters.js';
 
+import { ErrorHandler } from './errors/ErrorHandler.js';
+import { SignalHandler } from './utils/SignalHandler.js';
+import { InvalidPathError, PathNotFoundError } from './errors/CliError.js';
+
 /**
  * Main application orchestrator for Cleanr.
  * 
@@ -17,17 +21,27 @@ export class CleanrApp {
   private readonly cleaner: FolderCleaner;
   private readonly logger: TerminalLogger;
   private readonly promptService: PromptService;
+  private readonly errorHandler: ErrorHandler;
+  private readonly signalHandler: SignalHandler;
 
   constructor(
     scanner = new DirectoryScanner(),
     cleaner = new FolderCleaner(),
     logger = new TerminalLogger(),
     promptService = new PromptService(),
+    errorHandler = new ErrorHandler(logger),
+    signalHandler = new SignalHandler(),
   ) {
     this.scanner = scanner;
     this.cleaner = cleaner;
     this.logger = logger;
     this.promptService = promptService;
+    this.errorHandler = errorHandler;
+    this.signalHandler = signalHandler;
+  }
+
+  getErrorHandler(): ErrorHandler {
+    return this.errorHandler;
   }
 
   /**
@@ -39,19 +53,18 @@ export class CleanrApp {
     yes?: boolean;
     exclude?: string[];
   }): Promise<void> {
+    this.signalHandler.register();
     this.logger.showBanner();
 
     if (!options.path) {
-      this.logger.showError('Error: Please explicitly specify a path using --path or -p (e.g. cleanr -p ./projects)');
-      process.exit(1);
+      throw new InvalidPathError('Please explicitly specify a path using --path or -p (e.g. cleanr -p ./projects)');
     }
 
     const resolvedPath = resolveAbsolutePath(options.path);
     const exists = await directoryExists(resolvedPath);
 
     if (!exists) {
-      this.logger.showError(`Error: Specified directory path does not exist: ${resolvedPath}`);
-      process.exit(1);
+      throw new PathNotFoundError(resolvedPath);
     }
 
     const scanOptions: ScanOptions = {

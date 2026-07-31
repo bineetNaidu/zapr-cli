@@ -4,6 +4,7 @@ import type { DiscoveredTarget, ScanOptions, ScanResult } from '../../types/inde
 import { DiskCalculator } from '../stats/DiskCalculator.js';
 import { formatBytes, formatDuration, resolveAbsolutePath } from '../../utils/formatters.js';
 import { TARGET_FOLDER_NAME } from '../../config/defaults.js';
+import { PathNotFoundError, PermissionError } from '../../errors/CliError.js';
 
 /**
  * Core engine responsible for scanning workspace trees to locate node_modules directories.
@@ -31,7 +32,20 @@ export class DirectoryScanner {
     const targets: DiscoveredTarget[] = [];
     let totalSizeBytes = 0;
 
-    const topLevelEntries = await fs.readdir(rootPath, { withFileTypes: true });
+    let topLevelEntries: import('node:fs').Dirent[] = [];
+
+    try {
+      topLevelEntries = await fs.readdir(rootPath, { withFileTypes: true });
+    } catch (err: unknown) {
+      const code = (err as NodeJS.ErrnoException).code;
+      if (code === 'ENOENT') {
+        throw new PathNotFoundError(rootPath);
+      }
+      if (code === 'EACCES' || code === 'EPERM') {
+        throw new PermissionError(rootPath, 'read directory');
+      }
+      throw err;
+    }
 
     // Scenario 1: Check if the specified root directory itself is a direct node_modules container
     const rootNodeModules = topLevelEntries.find(

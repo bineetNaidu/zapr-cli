@@ -37,15 +37,26 @@ export const rootCommand = defineCommand({
       alias: 'e',
       description: 'Folder name(s) to skip scanning (comma-separated)',
     },
+    debug: {
+      type: 'boolean',
+      description: 'Enable verbose error stack traces',
+      default: false,
+    },
   },
   async run({ args }) {
     const excludeList = args.exclude ? args.exclude.split(',').map((s) => s.trim()) : [];
     const app = new CleanrApp();
-    await app.run({
-      path: args.path,
-      dryRun: args['dry-run'],
-      yes: args.yes,
-      exclude: excludeList,
-    });
+
+    try {
+      await app.run({
+        path: args.path,
+        dryRun: args['dry-run'],
+        yes: args.yes,
+        exclude: excludeList,
+      });
+    } catch (err: unknown) {
+      const exitCode = app.getErrorHandler().handle(err, args.debug);
+      process.exit(exitCode);
+    }
   },
 });
