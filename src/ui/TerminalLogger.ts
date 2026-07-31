@@ -14,7 +14,9 @@ export class TerminalLogger {
   }
 
   showDryRunWarning(): void {
-    this.logger.info(`${pc.yellow(pc.bold('DRY-RUN MODE'))} ${pc.dim('— No files will be modified or deleted.')}`);
+    this.logger.info(
+      `${pc.yellow(pc.bold('DRY-RUN MODE'))} ${pc.dim('— No files will be modified or deleted.')}`,
+    );
   }
 
   showScanningStart(path: string): void {
@@ -32,7 +34,9 @@ export class TerminalLogger {
   showDiscoveredTarget(target: DiscoveredTarget): void {
     const count = target.nodeModulesPaths.length;
     this.logger.log(
-      `  ${pc.green('✔')} Discovered in ${pc.bold(target.folderName)} ${pc.dim(`(${count} folder${count > 1 ? 's' : ''})`)}`,
+      pc.greenBright(
+        `  ${pc.green('✔')} Discovered in ${pc.bold(target.folderName)} ${pc.dim(`(${count} folder${count > 1 ? 's' : ''})`)}`,
+      ),
     );
     target.nodeModulesPaths.forEach((path) => {
       this.logger.log(`    ${pc.dim('↳ ' + path)}`);
@@ -53,20 +57,30 @@ export class TerminalLogger {
   showScanSummary(result: ScanResult): void {
     this.logger.log('');
     this.logger.success(pc.bold(`Scan complete in ${pc.cyan(result.durationSeconds + 's')}`));
-    this.logger.log(`  ${pc.dim('•')} Target Folders : ${pc.yellow(result.totalNodeModulesCount.toString())} 'node_modules' directories`);
-    this.logger.log(`  ${pc.dim('•')} Project Groups : ${pc.yellow(result.targets.length.toString())} projects`);
-    this.logger.log(`  ${pc.dim('•')} Reclaimable   : ${pc.bold(pc.green(result.formattedSize))}\n`);
+    this.logger.log(
+      `  ${pc.dim('•')} Target Folders : ${pc.yellow(result.totalNodeModulesCount.toString())} 'node_modules' directories`,
+    );
+    this.logger.log(
+      `  ${pc.dim('•')} Project Groups : ${pc.yellow(result.targets.length.toString())} projects`,
+    );
+    this.logger.log(
+      `  ${pc.dim('•')} Reclaimable   : ${pc.bold(pc.green(result.formattedSize))}\n`,
+    );
   }
 
   showDryRunResults(targets: DiscoveredTarget[]): void {
     const allPaths = targets.flatMap((t) => t.nodeModulesPaths);
     this.logger.info(pc.bold('Dry-run preview summary:'));
     allPaths.forEach((p) => this.logger.log(`  ${pc.dim('• ' + p)}`));
-    this.logger.log(`\n  ${pc.dim('💡 Tip: Pass')} ${pc.cyan('-y')} ${pc.dim('or')} ${pc.cyan('--yes')} ${pc.dim('to execute deletion.')}\n`);
+    this.logger.log(
+      `\n  ${pc.dim('💡 Tip: Pass')} ${pc.cyan('-y')} ${pc.dim('or')} ${pc.cyan('--yes')} ${pc.dim('to execute deletion.')}\n`,
+    );
   }
 
   showDeletionStart(count: number): void {
-    this.logger.info(`Starting parallel deletion of ${pc.yellow(count.toString())} directory(ies)...\n`);
+    this.logger.info(
+      `Starting parallel deletion of ${pc.yellow(count.toString())} directory(ies)...\n`,
+    );
   }
 
   showDeletionSuccess(successCount: number, freedSize: string): void {
