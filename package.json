@@ -1,0 +1,49 @@
+{
+  "name": "cleanr",
+  "version": "1.0.0",
+  "description": "Blazing fast node_modules scanner & cleaner CLI tool",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "cleanr": "./bin/cleanr.mjs"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "lint": "oxlint src/",
+    "format": "prettier --write src/ tests/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "cli",
+    "cleanr",
+    "node_modules",
+    "cleaner",
+    "purge",
+    "disk-space"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "citty": "^0.2.2",
+    "consola": "^3.4.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "@vitest/coverage-v8": "^4.1.10",
+    "oxlint": "^1.76.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1",
+    "vitest": "^4.1.10"
+  }
+}
