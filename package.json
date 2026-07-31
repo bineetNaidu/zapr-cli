@@ -31,7 +31,7 @@
     "disk-space"
   ],
   "author": "",
-  "license": "MIT",
+  "license": "Blue-Oak-1.0.0",
   "dependencies": {
     "citty": "^0.2.2",
     "consola": "^3.4.2",
