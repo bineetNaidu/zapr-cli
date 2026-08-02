@@ -1,7 +1,8 @@
 import { createConsola } from 'consola';
 import pc from 'picocolors';
-import type { DiscoveredTarget, ScanResult } from '../types/index.js';
 import pkg from '../../package.json' with { type: 'json' };
+import { DEFAULT_EXCLUDED_FOLDERS } from '../config/defaults.js';
+import type { DiscoveredTarget, ScanResult } from '../types/index.js';
 
 export class TerminalLogger {
   private targetRoot = '';
@@ -37,6 +38,7 @@ export class TerminalLogger {
   }
 
   showSkippedFolder(folderName: string): void {
+    if (DEFAULT_EXCLUDED_FOLDERS.includes(folderName)) return;
     this.logger.log(`  ${pc.dim('⏭  Skipping')} ${pc.yellow(folderName)}`);
   }
 
